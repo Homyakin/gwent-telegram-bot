@@ -11,6 +11,8 @@
     <properties>
         <java.version>14</java.version>
         <micronaut.version>2.0.1</micronaut.version>
+        <micronaut.picocli.version>2.2.0</micronaut.picocli.version>
+        <telegram.version>4.9</telegram.version>
     </properties>
 
     <dependencies>
@@ -20,17 +22,24 @@
             <artifactId>micronaut-inject</artifactId>
             <version>${micronaut.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-runtime -->
+        <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-graal -->
         <dependency>
             <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-runtime</artifactId>
+            <artifactId>micronaut-graal</artifactId>
             <version>${micronaut.version}</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/io.micronaut.picocli/micronaut-picocli -->
         <dependency>
             <groupId>io.micronaut.picocli</groupId>
             <artifactId>micronaut-picocli</artifactId>
-            <version>2.2.0</version>
+            <version>${micronaut.picocli.version}</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.telegram/telegrambots -->
+        <dependency>
+            <groupId>org.telegram</groupId>
+            <artifactId>telegrambots</artifactId>
+            <version>${telegram.version}</version>
         </dependency>
     </dependencies>
 
