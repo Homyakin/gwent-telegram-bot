@@ -14,10 +14,23 @@
     </properties>
 
     <dependencies>
+        <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-inject -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-inject</artifactId>
             <version>${micronaut.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-runtime -->
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-runtime</artifactId>
+            <version>${micronaut.version}</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.micronaut.picocli/micronaut-picocli -->
+        <dependency>
+            <groupId>io.micronaut.picocli</groupId>
+            <artifactId>micronaut-picocli</artifactId>
+            <version>2.2.0</version>
         </dependency>
     </dependencies>
 
