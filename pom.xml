@@ -10,29 +10,23 @@
 
     <properties>
         <java.version>14</java.version>
-        <micronaut.version>2.0.1</micronaut.version>
-        <micronaut.picocli.version>2.2.0</micronaut.picocli.version>
+        <spring.version>2.2.6.RELEASE</spring.version>
+        <start-class>ru.homyakin.gwent.Application</start-class>
         <telegram.version>4.9</telegram.version>
     </properties>
 
     <dependencies>
-        <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-inject -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter -->
         <dependency>
-            <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-inject</artifactId>
-            <version>${micronaut.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+            <version>${spring.version}</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.micronaut/micronaut-graal -->
+        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-configuration-processor -->
         <dependency>
-            <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-graal</artifactId>
-            <version>${micronaut.version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/io.micronaut.picocli/micronaut-picocli -->
-        <dependency>
-            <groupId>io.micronaut.picocli</groupId>
-            <artifactId>micronaut-picocli</artifactId>
-            <version>${micronaut.picocli.version}</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <version>${spring.version}</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/org.telegram/telegrambots -->
@@ -53,6 +47,17 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
