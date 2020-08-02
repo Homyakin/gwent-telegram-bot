@@ -102,10 +102,18 @@ public class GwentProfileService {
     }
 
     private String getMatchesInSeason(Element element) {
-        return element.getElementsByTag("strong").get(2).text().replace(" matches", "");
+        return element
+            .getElementsByTag("strong")
+            .get(2)
+            .text()
+            .replace(" matches", "");
     }
 
     private String getTypedMatchesInSeason(Element element) {
-        return element.getElementsByTag("td").get(1).text().replace(" matches", "");
+        return element
+            .getElementsByTag("td")
+            .get(1)
+            .text()
+            .replace(" matches", "");
     }
 }

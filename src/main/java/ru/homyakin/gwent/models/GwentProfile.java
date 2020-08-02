@@ -40,7 +40,7 @@ public class GwentProfile {
 
     @Override
     public String toString() {
-        var winrate = !matches.equals("0") ? Double.parseDouble(wins) / Double.parseDouble(matches) * 100 : 0d;
+        var winrate = !matches.equals("0") ? Double.parseDouble(wins.replace(",", "")) / Double.parseDouble(matches.replace(",", "")) * 100 : 0d;
         return EmojiParser.parseToUnicode(String.format(
             ":bust_in_silhouette: %s - %s MMR\n" +
                 "Престиж: %s\n" +
