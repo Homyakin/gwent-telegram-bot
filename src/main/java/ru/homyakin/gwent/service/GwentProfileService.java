@@ -31,6 +31,7 @@ public class GwentProfileService {
                 .getElementsByTag("tbody")
                 .get(0)
                 .getElementsByTag("tr");
+            var nick = getName(doc);
             var prestige = getPrestige(doc);
             var level = getLevel(doc);
             var mmr = getMmr(doc);
@@ -41,7 +42,7 @@ public class GwentProfileService {
             var loses = getTypedMatchesInSeason(currentRankedSeason.get(2));
             var draws = getTypedMatchesInSeason(currentRankedSeason.get(3));
             return Optional.of(new GwentProfile(
-                name,
+                nick,
                 level,
                 prestige,
                 mmr,

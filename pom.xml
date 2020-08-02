@@ -12,7 +12,7 @@
         <java.version>14</java.version>
         <spring.version>2.2.6.RELEASE</spring.version>
         <start-class>ru.homyakin.gwent.Application</start-class>
-        <telegram.version>4.9</telegram.version>
+        <telegram.version>4.9.1</telegram.version>
     </properties>
 
     <dependencies>
@@ -40,6 +40,12 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
             <version>1.13.1</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.vdurmont/emoji-java -->
+        <dependency>
+            <groupId>com.vdurmont</groupId>
+            <artifactId>emoji-java</artifactId>
+            <version>5.1.1</version>
         </dependency>
     </dependencies>
 
