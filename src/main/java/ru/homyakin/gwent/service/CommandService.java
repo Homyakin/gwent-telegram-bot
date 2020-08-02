@@ -1,5 +1,6 @@
 package ru.homyakin.gwent.service;
 
+import java.util.Optional;
 import org.springframework.stereotype.Service;
 import ru.homyakin.gwent.models.Command;
 import ru.homyakin.gwent.models.GwentProfile;
@@ -13,15 +14,15 @@ public class CommandService {
         this.gwentProfileService = gwentProfileService;
     }
 
-    public String executeCommand(String command) {
-        if (command.startsWith(Command.GET_PROFILE.getValue())) {
+    public Optional<String> executeCommand(String command) {
+        if (command.toLowerCase().startsWith(Command.GET_PROFILE.getValue())) {
             var args = command.split(" ");
-            if (args.length != 2) return UNKNOWN_COMMAND;
+            if (args.length != 2) return Optional.of(UNKNOWN_COMMAND);
             var name = args[1];
-            return gwentProfileService.getProfile(name)
+            return Optional.of(gwentProfileService.getProfile(name)
                 .map(GwentProfile::toString)
-                .orElse(String.format("Профиля %s не существует или он скрыт", name));
+                .orElse(String.format("Профиля %s не существует или он скрыт", name)));
         }
-        return UNKNOWN_COMMAND;
+        return Optional.empty();
     }
 }

@@ -30,10 +30,12 @@ public class Bot extends TelegramLongPollingBot {
         if (update.hasMessage()) {
             if (update.getMessage().isCommand()) {
                 var response = commandService.executeCommand(update.getMessage().getText());
-                var message = new SendMessage()
-                    .setChatId(update.getMessage().getChatId())
-                    .setText(response);
-                sendMessage(message);
+                if (response.isPresent()) {
+                    var message = new SendMessage()
+                        .setChatId(update.getMessage().getChatId())
+                        .setText(response.get());
+                    sendMessage(message);
+                }
             }
         }
     }

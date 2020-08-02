@@ -1,7 +1,7 @@
 package ru.homyakin.gwent.models;
 
 public enum Command {
-    GET_PROFILE("/getProfile");
+    GET_PROFILE("/get_profile");
 
     private final String value;
 
