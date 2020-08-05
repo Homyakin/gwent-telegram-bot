@@ -20,10 +20,16 @@ public class HttpService {
     }
 
     public Optional<String> getHtmlBodyByUrl(String url) {
-        var request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .GET()
-            .build();
+        HttpRequest request = null;
+        try {
+            request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .build();
+        } catch (Exception e) {
+            logger.error("Failed to create Request! Double-check your given url: " + url);
+            return Optional.empty();
+        }
         try {
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpURLConnection.HTTP_OK) {

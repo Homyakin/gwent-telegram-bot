@@ -1,4 +1,4 @@
-package ru.homyakin.gwent.service;
+package ru.homyakin.gwent.service.actions;
 
 import java.util.Optional;
 import org.jsoup.Jsoup;
@@ -8,13 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.homyakin.gwent.models.GwentProfile;
+import ru.homyakin.gwent.service.HttpService;
 
 @Service
-public class GwentProfileService {
-    private final static Logger logger = LoggerFactory.getLogger(GwentProfileService.class);
+public class GwentProfileAction {
+    private final static Logger logger = LoggerFactory.getLogger(GwentProfileAction.class);
     private final HttpService httpService;
 
-    public GwentProfileService(HttpService httpService) {
+    public GwentProfileAction(HttpService httpService) {
         this.httpService = httpService;
     }
 

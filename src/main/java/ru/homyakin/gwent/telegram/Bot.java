@@ -1,6 +1,9 @@
 package ru.homyakin.gwent.telegram;
 
 import java.util.Optional;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -11,6 +14,7 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.homyakin.gwent.config.BotConfiguration;
 import ru.homyakin.gwent.service.CommandService;
+import ru.homyakin.gwent.service.CommandsExecutor;
 
 @Component
 public class Bot extends TelegramLongPollingBot {
@@ -18,31 +22,21 @@ public class Bot extends TelegramLongPollingBot {
     private final String token;
     private final String username;
     private final CommandService commandService;
+    private final CommandsExecutor commandsExecutor;
+    private final ThreadPoolExecutor tasksExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
 
-    public Bot(BotConfiguration configuration, CommandService commandService) {
+    public Bot(BotConfiguration configuration,
+               CommandService commandService,
+               CommandsExecutor commandsExecutor) {
         token = configuration.getToken();
         username = configuration.getUsername();
         this.commandService = commandService;
+        this.commandsExecutor = commandsExecutor;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage()) {
-            if (update.getMessage().isCommand()) {
-                var response = commandService.executeCommand(update.getMessage().getText());
-                if (response.isPresent()) {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException ignored) {
-
-                    }
-                    var message = new SendMessage()
-                        .setChatId(update.getMessage().getChatId())
-                        .setText(response.get());
-                    sendMessage(message);
-                }
-            }
-        }
+        tasksExecutor.submit(commandsExecutor.processUpdate(this, update));
     }
 
     public Optional<Message> sendMessage(SendMessage message) {
@@ -62,5 +56,11 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public String getBotToken() {
         return token;
+    }
+
+    @Override
+    public void onClosing() {
+        super.onClosing();
+        this.tasksExecutor.shutdown();
     }
 }
