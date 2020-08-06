@@ -13,7 +13,6 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.homyakin.gwent.config.BotConfiguration;
-import ru.homyakin.gwent.service.CommandService;
 import ru.homyakin.gwent.service.CommandsExecutor;
 
 @Component
@@ -21,16 +20,13 @@ public class Bot extends TelegramLongPollingBot {
     private static final Logger logger = LoggerFactory.getLogger(Bot.class);
     private final String token;
     private final String username;
-    private final CommandService commandService;
     private final CommandsExecutor commandsExecutor;
     private final ThreadPoolExecutor tasksExecutor = (ThreadPoolExecutor) Executors.newFixedThreadPool(5);
 
     public Bot(BotConfiguration configuration,
-               CommandService commandService,
                CommandsExecutor commandsExecutor) {
         token = configuration.getToken();
         username = configuration.getUsername();
-        this.commandService = commandService;
         this.commandsExecutor = commandsExecutor;
     }
 

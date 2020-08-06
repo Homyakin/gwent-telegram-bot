@@ -20,6 +20,7 @@ class CommandsExecutor(
                 ?: update.editedMessage
                 ?: update.callbackQuery.message
         logger.info("Обработка сообщения: ${message.from.userName}")
+        logger.info("Само сообщение: ${message.text}")
 
         val action = selectAction(update)
 
