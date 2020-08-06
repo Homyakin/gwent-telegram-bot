@@ -20,11 +20,11 @@ public class HttpService {
     }
 
     public Optional<String> getHtmlBodyByUrl(String url) {
-        var request = HttpRequest.newBuilder()
-            .uri(URI.create(url))
-            .GET()
-            .build();
         try {
+            var request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .GET()
+                .build();
             var response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != HttpURLConnection.HTTP_OK) {
                 logger.error("Http code is not ok: {}", response.statusCode());
