@@ -8,6 +8,7 @@ import org.telegram.telegrambots.meta.api.objects.Message
 import org.telegram.telegrambots.meta.api.objects.Update
 import org.telegram.telegrambots.meta.bots.AbsSender
 import ru.homyakin.gwent.config.BotConfiguration
+import ru.homyakin.gwent.models.CardsDataFactory
 import ru.homyakin.gwent.service.HttpService
 import java.lang.Exception
 
@@ -43,7 +44,13 @@ class GwentCardsAction(
                     }
                     htmlDoc?.let {
                         val nameFromWebsite = it.getElementsByClass("l-player-details__name")[0].text()
-                        absSender.execute(SendMessage(update.chatId(), "Я достал имя пользователя! $nameFromWebsite"))
+                        val cardsData = CardsDataFactory().tryToExtractCardsDataFromDocument(it)
+                        val cardsInformationMessage = cardsData.map { cardInfo ->
+                            "${cardInfo.type.rusName}: ${cardInfo.currentCount} из ${cardInfo.totalCount}"
+                        }
+                        val resultInformationMessage = "Я достал данные по пользователю $nameFromWebsite:\n" +
+                                cardsInformationMessage.joinToString("\n")
+                        absSender.execute(SendMessage(update.chatId(), resultInformationMessage))
                         return@Runnable
                     }
                 }
@@ -68,8 +75,8 @@ class GwentCardsAction(
     private fun Update.getCommandUsernameFromMessage() = when {
         // Не стоит доставать сообщение из того, которое отредактировали
         this.hasMessage() && !this.hasEditedMessage() -> {
-            if(message.text.startsWith("/$commandName")) {
-               message.text.substringAfter(commandName).trim()
+            if (message.text.startsWith("/$commandName")) {
+                message.text.substringAfter(commandName).trim()
             } else {
                 ""
             }
