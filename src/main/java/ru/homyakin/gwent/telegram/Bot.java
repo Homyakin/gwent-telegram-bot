@@ -1,5 +1,6 @@
 package ru.homyakin.gwent.telegram;
 
+import com.vdurmont.emoji.EmojiParser;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,6 +11,8 @@ import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.homyakin.gwent.config.BotConfiguration;
+import ru.homyakin.gwent.models.exceptions.EitherError;
+import ru.homyakin.gwent.models.exceptions.UnknownCommand;
 import ru.homyakin.gwent.service.CommandService;
 
 @Component
@@ -29,16 +32,15 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
             if (update.getMessage().isCommand()) {
+                logger.info("New request {} from {}", update.getMessage().getText(), update.getMessage().getFrom());
                 var response = commandService.executeCommand(update.getMessage().getText());
-                if (response.isPresent()) {
-                    try {
-                        Thread.sleep(2000);
-                    } catch (InterruptedException ignored) {
-
-                    }
+                if ( response.isRight() || response.isLeft() &&
+                    (!(response.getLeft() instanceof UnknownCommand) || update.getMessage().isUserMessage())
+                ) {
+                    var text = response.map(EmojiParser::parseToUnicode).getOrElseGet(EitherError::getMessage);
                     var message = new SendMessage()
                         .setChatId(update.getMessage().getChatId())
-                        .setText(response.get());
+                        .setText(text);
                     sendMessage(message);
                 }
             }

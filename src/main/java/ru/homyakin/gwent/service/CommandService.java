@@ -1,11 +1,11 @@
 package ru.homyakin.gwent.service;
 
-import java.util.List;
-import java.util.Optional;
+import io.vavr.control.Either;
 import org.springframework.stereotype.Service;
 import ru.homyakin.gwent.models.Command;
-import ru.homyakin.gwent.models.FactionCardsData;
-import ru.homyakin.gwent.models.GwentProfile;
+import ru.homyakin.gwent.models.exceptions.EitherError;
+import ru.homyakin.gwent.models.exceptions.InvalidCommand;
+import ru.homyakin.gwent.models.exceptions.UnknownCommand;
 import ru.homyakin.gwent.service.action.GwentCardsAction;
 import ru.homyakin.gwent.service.action.GwentProfileAction;
 
@@ -23,21 +23,18 @@ public class CommandService {
         this.gwentCardsAction = gwentCardsAction;
     }
 
-    public Optional<String> executeCommand(String command) {
+    public Either<EitherError, String> executeCommand(String command) {
         if (command.toLowerCase().startsWith(Command.GET_PROFILE.getValue())) {
             var args = command.split(" ");
-            if (args.length != 2) return Optional.of(UNKNOWN_COMMAND);
+            if (args.length != 2) return Either.left(new InvalidCommand("Не забывай отправить имя"));
             var name = args[1];
-            return Optional.of(gwentProfileAction.getProfile(name)
-                .map(GwentProfile::toString)
-                .orElse(String.format("Профиля %s не существует или он скрыт", name)));
+            return gwentProfileAction.getProfile(name);
         } else if (command.toLowerCase().startsWith(Command.GET_CARDS.getValue())) {
             var args = command.split(" ");
-            if (args.length != 2) return Optional.of(UNKNOWN_COMMAND);
+            if (args.length != 2) return Either.left(new InvalidCommand("Не забывай отправить имя"));
             var name = args[1];
-            return Optional.of(gwentCardsAction.getCards(name)
-                .orElse(String.format("Профиля %s не существует или он скрыт", name)));
+            return gwentCardsAction.getCards(name);
         }
-        return Optional.empty();
+        return Either.left(new UnknownCommand());
     }
 }

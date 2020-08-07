@@ -1,17 +1,19 @@
 package ru.homyakin.gwent.service.action;
 
-import java.util.ArrayList;
+import io.vavr.control.Either;
 import java.util.List;
-import java.util.Optional;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.homyakin.gwent.models.FactionType;
 import ru.homyakin.gwent.models.FactionCardsData;
+import ru.homyakin.gwent.models.exceptions.EitherError;
+import ru.homyakin.gwent.models.exceptions.ParsingError;
+import ru.homyakin.gwent.models.exceptions.ProfileIsHidden;
+import ru.homyakin.gwent.models.exceptions.ProfileNotFound;
 import ru.homyakin.gwent.service.HttpService;
 import java.lang.Exception;
+import ru.homyakin.gwent.utils.GwentProfileUtils;
 
 @Service
 public class GwentCardsAction {
@@ -22,31 +24,25 @@ public class GwentCardsAction {
         this.httpService = httpService;
     }
 
-    public Optional<String> getCards(String name) {
+    public Either<EitherError, String> getCards(String name) {
         var body = httpService.getHtmlBodyByUrl(String.format("https://www.playgwent.com/en/profile/%s", name));
-        if (body.isEmpty()) return Optional.empty();
+        if (body.isLeft()) {
+            return body;
+        }
         try {
             var doc = Jsoup.parse(body.get());
-            return Optional.of(name + "\n" + parseHtml(doc));
-        }catch (Exception e) {
-            logger.error("Unexpected error");
-            return Optional.empty();
+            if (GwentProfileUtils.isHidden(doc)) {
+                return Either.left(new ProfileIsHidden(name));
+            }
+            if (GwentProfileUtils.isNotFound(doc)) {
+                return Either.left(new ProfileNotFound(name));
+            }
+            var gwentCards = GwentProfileUtils.getCardsData(doc);
+            return Either.right(GwentProfileUtils.getName(doc) + "\n" + convertAllFactionCardsToString(gwentCards));
+        } catch (Exception e) {
+            logger.error("Unexpected error during parsing", e);
+            return Either.left(new ParsingError());
         }
-    }
-
-    private String parseHtml(Document doc) {
-        var gwentCards = new ArrayList<FactionCardsData>();
-        for (var faction: FactionType.values()) {
-            var factionBar = doc.getElementsByClass(String.format("c-faction-bar--%s", faction.getSiteName())).get(0);
-            var cards = Integer.parseInt(
-                factionBar.getElementsByClass("stats_count").get(0).text().replace(",", "")
-            );
-            var totalCards = Integer.parseInt(
-                factionBar.getElementsByClass("stats_overall").get(0).text().replace(",", "")
-            );
-            gwentCards.add(new FactionCardsData(faction, cards, totalCards));
-        }
-        return convertAllFactionCardsToString(gwentCards);
     }
 
     private String convertAllFactionCardsToString(List<FactionCardsData> list) {

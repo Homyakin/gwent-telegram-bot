@@ -1,7 +1,5 @@
 package ru.homyakin.gwent.models;
 
-import com.vdurmont.emoji.EmojiParser;
-
 public class GwentProfile {
     private final String name;
     private final String level;
@@ -41,7 +39,7 @@ public class GwentProfile {
     @Override
     public String toString() {
         var winrate = !matches.equals("0") ? Double.parseDouble(wins.replace(",", "")) / Double.parseDouble(matches.replace(",", "")) * 100 : 0d;
-        return EmojiParser.parseToUnicode(String.format(
+        return String.format(
             ":bust_in_silhouette: %s - %s MMR\n" +
                 "Престиж: %s\n" +
                 "Уровень: %s\n" +
@@ -62,6 +60,6 @@ public class GwentProfile {
             wins,
             loses,
             draws
-        ));
+        );
     }
 }

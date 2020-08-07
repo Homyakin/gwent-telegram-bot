@@ -1,14 +1,17 @@
 package ru.homyakin.gwent.service.action;
 
-import java.util.Optional;
+import io.vavr.control.Either;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.homyakin.gwent.models.GwentProfile;
+import ru.homyakin.gwent.models.exceptions.EitherError;
+import ru.homyakin.gwent.models.exceptions.ParsingError;
+import ru.homyakin.gwent.models.exceptions.ProfileIsHidden;
+import ru.homyakin.gwent.models.exceptions.ProfileNotFound;
 import ru.homyakin.gwent.service.HttpService;
+import ru.homyakin.gwent.utils.GwentProfileUtils;
 
 @Service
 public class GwentProfileAction {
@@ -19,30 +22,37 @@ public class GwentProfileAction {
         this.httpService = httpService;
     }
 
-    public Optional<GwentProfile> getProfile(String name) {
-        var body = httpService.getHtmlBodyByUrl(
-            String.format("https://www.playgwent.com/en/profile/%s", name)
-        );
-        if (body.isEmpty()) return Optional.empty();
+    public Either<EitherError, String> getProfile(String name) {
+        var url = String.format("https://www.playgwent.com/en/profile/%s", name);
+        var body = httpService.getHtmlBodyByUrl(url);
+        if (body.isLeft()) {
+            return body;
+        }
         try {
             var doc = Jsoup.parse(body.get());
+            if (GwentProfileUtils.isHidden(doc)) {
+                return Either.left(new ProfileIsHidden(name));
+            }
+            if (GwentProfileUtils.isNotFound(doc)) {
+                return Either.left(new ProfileNotFound(name));
+            }
             var currentRankedSeason = doc
                 .getElementsByClass("c-statistics-table current-ranked")
                 .get(0)
                 .getElementsByTag("tbody")
                 .get(0)
                 .getElementsByTag("tr");
-            var nick = getName(doc);
-            var prestige = getPrestige(doc);
-            var level = getLevel(doc);
-            var mmr = getMmr(doc);
-            var rank = getRank(doc);
-            var position = getPosition(doc);
-            var matches = getMatchesInSeason(currentRankedSeason.get(0));
-            var wins = getTypedMatchesInSeason(currentRankedSeason.get(1));
-            var loses = getTypedMatchesInSeason(currentRankedSeason.get(2));
-            var draws = getTypedMatchesInSeason(currentRankedSeason.get(3));
-            return Optional.of(new GwentProfile(
+            var nick = GwentProfileUtils.getName(doc);
+            var prestige = GwentProfileUtils.getPrestige(doc);
+            var level = GwentProfileUtils.getLevel(doc);
+            var mmr = GwentProfileUtils.getMmr(doc);
+            var rank = GwentProfileUtils.getRank(doc);
+            var position = GwentProfileUtils.getPosition(doc);
+            var matches = GwentProfileUtils.getMatchesInSeason(currentRankedSeason.get(0));
+            var wins = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(1));
+            var loses = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(2));
+            var draws = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(3));
+            return Either.right(new GwentProfile(
                 nick,
                 level,
                 prestige,
@@ -53,68 +63,10 @@ public class GwentProfileAction {
                 loses,
                 draws,
                 rank
-            ));
+            ).toString());
         } catch (Exception e) {
-            logger.error("Unknown error", e);
+            logger.error("Unexpected error during parsing", e);
+            return Either.left(new ParsingError());
         }
-        return Optional.empty();
-    }
-
-    private String getName(Document doc) {
-        return doc.getElementsByClass("l-player-details__name").get(0).text();
-    }
-
-    private String getPrestige(Document doc) {
-        var set = doc
-            .getElementsByClass("l-player-details__prestige")
-            .get(0)
-            .classNames();
-        set.remove("l-player-details__prestige");
-        var s = (String) set.toArray()[0];
-        return s.replace("l-player-details__prestige--", "");
-    }
-
-    private String getLevel(Document doc) {
-        return doc.getElementsByClass("l-player-details__prestige").get(0).text();
-    }
-
-    private String getRank(Document doc) {
-        return doc.getElementsByClass("l-player-details__rank").get(0).text();
-    }
-
-    private String getPosition(Document doc) {
-        return doc
-            .getElementsByClass("l-player-details__table-position")
-            .get(0)
-            .getElementsByTag("strong")
-            .get(0)
-            .text()
-            .replace(" ", "");
-    }
-
-    private String getMmr(Document doc) {
-        return doc
-            .getElementsByClass("l-player-details__table-mmr")
-            .get(0)
-            .getElementsByTag("strong")
-            .get(0)
-            .text()
-            .replace(" ", "");
-    }
-
-    private String getMatchesInSeason(Element element) {
-        return element
-            .getElementsByTag("strong")
-            .get(2)
-            .text()
-            .replace(" matches", "");
-    }
-
-    private String getTypedMatchesInSeason(Element element) {
-        return element
-            .getElementsByTag("td")
-            .get(1)
-            .text()
-            .replace(" matches", "");
     }
 }
