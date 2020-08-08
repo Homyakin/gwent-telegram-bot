@@ -32,7 +32,12 @@ public class Bot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
             if (update.getMessage().isCommand()) {
-                logger.info("New request {} from {}", update.getMessage().getText(), update.getMessage().getFrom());
+                logger.info(
+                    "New request {} from {} in {}",
+                    update.getMessage().getText(),
+                    update.getMessage().getFrom(),
+                    update.getMessage().getChat()
+                );
                 var response = commandService.executeCommand(update.getMessage().getText());
                 if ( response.isRight() || response.isLeft() &&
                     (!(response.getLeft() instanceof UnknownCommand) || update.getMessage().isUserMessage())
