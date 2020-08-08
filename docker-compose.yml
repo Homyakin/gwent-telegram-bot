@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  gwent-bot:
+    build: ./
+    network_mode: host
+    depends_on:
+      - gwent-db
+  gwent-db:
+    build: database/
+    ports:
+    - 3307:3306
+
+
