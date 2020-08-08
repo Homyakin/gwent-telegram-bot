@@ -39,7 +39,7 @@ public class CommandService {
             return gwentCardsAction.getCards(name, message.getId());
         } else if (command.toLowerCase().startsWith(Command.REGISTER.getValue())) {
             var name = getNameFromCommand(command);
-            if (name.isEmpty()) return Either.left(new InvalidCommand("Не забывай отправить имя"));
+            if (name.isEmpty()) return Either.left(new InvalidCommand("Не забывай отправить имя через пробел после команды"));
             return registerProfileAction.registerProfile(name.get(), message.getId());
         }
         return Either.left(new UnknownCommand());

@@ -49,7 +49,7 @@ public class UsersRepository {
                 (rs, rowNum) -> rs.getString("gwent_profile_name")
             );
             if (result.size() == 0) {
-                return Either.left(new UserNotRegistered("Зарегистрируйся или введи имя"));
+                return Either.left(new UserNotRegistered("Зарегистрируйся или добавь имя через пробел после команды"));
             }
             return Either.right(result.get(0));
         } catch (Exception e) {
