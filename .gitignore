@@ -1,6 +1,6 @@
 .idea
-telegram-bot/target/
-telegram-bot/src/main/resources/application-dev.yml
+target/
+src/main/resources/application-dev.yml
 *.log
 *.iml
 database/docker/gwent-db
