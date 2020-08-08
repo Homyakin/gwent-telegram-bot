@@ -82,6 +82,16 @@ public class GwentProfileUtils {
         return gwentCards;
     }
 
+    public static String getProfileAvatarLink(Document doc) {
+        return doc
+            .getElementsByClass("l-player-details__avatar")
+            .get(0)
+            .getElementsByTag("img")
+            .get(0)
+            .attributes()
+            .get("src");
+    }
+
     public static boolean isHidden(Document doc) {
         return doc.getElementsByClass("icon-private").size() != 0;
     }

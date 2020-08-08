@@ -6,6 +6,7 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.homyakin.gwent.models.CommandResponse;
 import ru.homyakin.gwent.models.FactionCardsData;
 import ru.homyakin.gwent.models.exceptions.EitherError;
 import ru.homyakin.gwent.models.exceptions.ParsingError;
@@ -24,10 +25,10 @@ public class GwentCardsAction {
         this.httpService = httpService;
     }
 
-    public Either<EitherError, String> getCards(String name) {
+    public Either<EitherError, CommandResponse> getCards(String name) {
         var body = httpService.getHtmlBodyByUrl(String.format("https://www.playgwent.com/en/profile/%s", name));
         if (body.isLeft()) {
-            return body;
+            return Either.left(body.getLeft());
         }
         try {
             var doc = Jsoup.parse(body.get());
@@ -38,7 +39,9 @@ public class GwentCardsAction {
                 return Either.left(new ProfileNotFound(name));
             }
             var gwentCards = GwentProfileUtils.getCardsData(doc);
-            return Either.right(GwentProfileUtils.getName(doc) + "\n" + convertAllFactionCardsToString(gwentCards));
+            return Either.right(new CommandResponse(
+                GwentProfileUtils.getName(doc) + "\n" + convertAllFactionCardsToString(gwentCards)
+            ));
         } catch (Exception e) {
             logger.error("Unexpected error during parsing", e);
             return Either.left(new ParsingError());

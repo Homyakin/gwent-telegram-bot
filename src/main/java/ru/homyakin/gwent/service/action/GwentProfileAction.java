@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import ru.homyakin.gwent.models.CommandResponse;
 import ru.homyakin.gwent.models.GwentProfile;
 import ru.homyakin.gwent.models.exceptions.EitherError;
 import ru.homyakin.gwent.models.exceptions.ParsingError;
@@ -22,11 +23,11 @@ public class GwentProfileAction {
         this.httpService = httpService;
     }
 
-    public Either<EitherError, String> getProfile(String name) {
+    public Either<EitherError, CommandResponse> getProfile(String name) {
         var url = String.format("https://www.playgwent.com/en/profile/%s", name);
         var body = httpService.getHtmlBodyByUrl(url);
         if (body.isLeft()) {
-            return body;
+            return Either.left(body.getLeft());
         }
         try {
             var doc = Jsoup.parse(body.get());
@@ -52,7 +53,7 @@ public class GwentProfileAction {
             var wins = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(1));
             var loses = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(2));
             var draws = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(3));
-            return Either.right(new GwentProfile(
+            var gwentProfile = new GwentProfile(
                 nick,
                 level,
                 prestige,
@@ -63,7 +64,8 @@ public class GwentProfileAction {
                 loses,
                 draws,
                 rank
-            ).toString());
+            ).toString();
+            return Either.right(new CommandResponse(gwentProfile, GwentProfileUtils.getProfileAvatarLink(doc)));
         } catch (Exception e) {
             logger.error("Unexpected error during parsing", e);
             return Either.left(new ParsingError());

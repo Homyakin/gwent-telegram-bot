@@ -3,6 +3,7 @@ package ru.homyakin.gwent.service;
 import io.vavr.control.Either;
 import org.springframework.stereotype.Service;
 import ru.homyakin.gwent.models.Command;
+import ru.homyakin.gwent.models.CommandResponse;
 import ru.homyakin.gwent.models.exceptions.EitherError;
 import ru.homyakin.gwent.models.exceptions.InvalidCommand;
 import ru.homyakin.gwent.models.exceptions.UnknownCommand;
@@ -23,7 +24,7 @@ public class CommandService {
         this.gwentCardsAction = gwentCardsAction;
     }
 
-    public Either<EitherError, String> executeCommand(String command) {
+    public Either<EitherError, CommandResponse> executeCommand(String command) {
         if (command.toLowerCase().startsWith(Command.GET_PROFILE.getValue())) {
             var args = command.split(" ");
             if (args.length != 2) return Either.left(new InvalidCommand("Не забывай отправить имя"));
