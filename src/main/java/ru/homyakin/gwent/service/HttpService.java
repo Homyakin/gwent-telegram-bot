@@ -8,8 +8,8 @@ import java.net.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import ru.homyakin.gwent.models.exceptions.EitherError;
-import ru.homyakin.gwent.models.exceptions.UnknownHttpError;
+import ru.homyakin.gwent.models.errors.EitherError;
+import ru.homyakin.gwent.models.errors.UnknownHttpError;
 
 @Service
 public class HttpService {

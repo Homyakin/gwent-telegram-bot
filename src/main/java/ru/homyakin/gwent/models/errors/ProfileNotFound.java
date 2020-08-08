@@ -1,4 +1,4 @@
-package ru.homyakin.gwent.models.exceptions;
+package ru.homyakin.gwent.models.errors;
 
 public class ProfileNotFound extends EitherError {
 

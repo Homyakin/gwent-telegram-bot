@@ -2,7 +2,8 @@ package ru.homyakin.gwent.models;
 
 public enum Command {
     GET_PROFILE("/get_profile"),
-    GET_CARDS("/get_cards");
+    GET_CARDS("/get_cards"),
+    REGISTER("/register");
 
     private final String value;
 

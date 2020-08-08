@@ -1,4 +1,4 @@
-package ru.homyakin.gwent.models.exceptions;
+package ru.homyakin.gwent.models.errors;
 
 //TODO make sealed when release
 public abstract class EitherError {

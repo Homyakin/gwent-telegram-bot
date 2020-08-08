@@ -14,8 +14,9 @@ import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import ru.homyakin.gwent.config.BotConfiguration;
 import ru.homyakin.gwent.models.CommandResponse;
-import ru.homyakin.gwent.models.exceptions.EitherError;
-import ru.homyakin.gwent.models.exceptions.UnknownCommand;
+import ru.homyakin.gwent.models.UserMessage;
+import ru.homyakin.gwent.models.errors.EitherError;
+import ru.homyakin.gwent.models.errors.UnknownCommand;
 import ru.homyakin.gwent.service.CommandService;
 
 @Component
@@ -41,7 +42,10 @@ public class Bot extends TelegramLongPollingBot {
                     update.getMessage().getFrom(),
                     update.getMessage().getChat()
                 );
-                var response = commandService.executeCommand(update.getMessage().getText());
+                var response = commandService
+                    .executeCommand(
+                        new UserMessage(update.getMessage().getText(), update.getMessage().getFrom().getId())
+                    );
                 var text = response
                     .map(CommandResponse::getText)
                     .map(EmojiParser::parseToUnicode)
@@ -56,21 +60,22 @@ public class Bot extends TelegramLongPollingBot {
                         sendMessage(message);
                     } catch (Exception e) {
                         logger.error("Error during sending photo {}", imageLink, e);
-                        var message = new SendMessage()
-                            .setChatId(update.getMessage().getChatId())
-                            .setText(text);
-                        sendMessage(message);
+                        sendTextMessage(text, update.getMessage().getChatId());
                     }
                 } else if ( response.isRight() || response.isLeft() &&
                     (!(response.getLeft() instanceof UnknownCommand) || update.getMessage().isUserMessage())
                 ) {
-                    var message = new SendMessage()
-                        .setChatId(update.getMessage().getChatId())
-                        .setText(text);
-                    sendMessage(message);
+                    sendTextMessage(text, update.getMessage().getChatId());
                 }
             }
         }
+    }
+
+    public Optional<Message> sendTextMessage(String text, Long chatId) {
+        var message = new SendMessage()
+            .setChatId(chatId)
+            .setText(text);
+        return sendMessage(message);
     }
 
     public Optional<Message> sendMessage(SendMessage message) {
