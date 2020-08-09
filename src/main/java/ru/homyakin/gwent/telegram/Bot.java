@@ -51,15 +51,15 @@ public class Bot extends TelegramLongPollingBot {
                     .map(EmojiParser::parseToUnicode)
                     .getOrElseGet(EitherError::getMessage);
                 if (response.isRight() && response.get().getImageLink().isPresent()) {
-                    var imageLink = response.get().getImageLink().get();
+                    var imageStream = response.get().getImageLink().get();
                     try {
                         var message = new SendPhoto()
-                            .setPhoto(imageLink, new URL(imageLink).openStream())
+                            .setPhoto(imageStream.toString(), imageStream)
                             .setCaption(text)
                             .setChatId(update.getMessage().getChatId());
                         sendMessage(message);
                     } catch (Exception e) {
-                        logger.error("Error during sending photo {}", imageLink, e);
+                        logger.error("Error during sending photo {}", imageStream, e);
                         sendTextMessage(text, update.getMessage().getChatId());
                     }
                 } else if ( response.isRight() || response.isLeft() &&

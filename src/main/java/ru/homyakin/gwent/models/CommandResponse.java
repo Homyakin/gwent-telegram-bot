@@ -1,25 +1,26 @@
 package ru.homyakin.gwent.models;
 
+import java.io.InputStream;
 import java.util.Optional;
 
 public class CommandResponse {
     private final String text;
-    private final String imageLink;
+    private final InputStream image;
 
     public CommandResponse(String text) {
         this(text, null);
     }
 
-    public CommandResponse(String text, String imageLink) {
+    public CommandResponse(String text, InputStream image) {
         this.text = text;
-        this.imageLink = imageLink;
+        this.image = image;
     }
 
     public String getText() {
         return text;
     }
 
-    public Optional<String> getImageLink() {
-        return Optional.ofNullable(imageLink);
+    public Optional<InputStream> getImageLink() {
+        return Optional.ofNullable(image);
     }
 }

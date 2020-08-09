@@ -4,7 +4,6 @@ import io.vavr.control.Either;
 import org.springframework.stereotype.Service;
 import ru.homyakin.gwent.database.UsersRepository;
 import ru.homyakin.gwent.models.CommandResponse;
-import ru.homyakin.gwent.models.GwentProfile;
 import ru.homyakin.gwent.models.errors.EitherError;
 
 @Service

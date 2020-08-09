@@ -13,9 +13,9 @@ import ru.homyakin.gwent.models.errors.EitherError;
 import ru.homyakin.gwent.models.errors.ParsingError;
 import ru.homyakin.gwent.models.errors.ProfileIsHidden;
 import ru.homyakin.gwent.models.errors.ProfileNotFound;
-import ru.homyakin.gwent.models.errors.UserNotRegistered;
 import ru.homyakin.gwent.service.HttpService;
 import ru.homyakin.gwent.utils.GwentProfileUtils;
+import ru.homyakin.gwent.utils.ImageUtils;
 
 @Service
 public class GwentProfileAction {
@@ -85,7 +85,10 @@ public class GwentProfileAction {
                 draws,
                 rank
             ).toString();
-            return Either.right(new CommandResponse(gwentProfile, GwentProfileUtils.getProfileAvatarLink(doc)));
+            var avatarLink = GwentProfileUtils.getProfileAvatarLink(doc);
+            var borderLink = GwentProfileUtils.getProfileBorderLink(doc);
+            var image = ImageUtils.combineAvatarAndBorder(avatarLink, borderLink);
+            return Either.right(new CommandResponse(gwentProfile, image.orElse(null)));
         } catch (Exception e) {
             logger.error("Unexpected error during parsing", e);
             return Either.left(new ParsingError());

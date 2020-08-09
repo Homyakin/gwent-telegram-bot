@@ -92,6 +92,16 @@ public class GwentProfileUtils {
             .get("src");
     }
 
+    public static String getProfileBorderLink(Document doc) {
+        return doc
+            .getElementsByClass("l-player-details__border")
+            .get(0)
+            .getElementsByTag("img")
+            .get(0)
+            .attributes()
+            .get("src");
+    }
+
     public static boolean isHidden(Document doc) {
         return doc.getElementsByClass("icon-private").size() != 0;
     }

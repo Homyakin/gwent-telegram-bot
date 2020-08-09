@@ -14,7 +14,6 @@ import ru.homyakin.gwent.models.errors.EitherError;
 import ru.homyakin.gwent.models.errors.ParsingError;
 import ru.homyakin.gwent.models.errors.ProfileIsHidden;
 import ru.homyakin.gwent.models.errors.ProfileNotFound;
-import ru.homyakin.gwent.models.errors.UserNotRegistered;
 import ru.homyakin.gwent.service.HttpService;
 import java.lang.Exception;
 import ru.homyakin.gwent.utils.GwentProfileUtils;
