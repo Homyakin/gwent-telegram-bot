@@ -111,4 +111,18 @@ public class GwentProfileUtils {
     public static boolean isNotFound(Document doc) {
         return doc.getElementsByClass("icon-not-found").size() != 0;
     }
+
+    public static String getWinsData(Document doc) {
+        var allWinsTable = doc
+            .getElementsByClass("c-statistics-table wins-table")
+            .get(0)
+            .getElementsByTag("tbody")
+            .get(0)
+            .getElementsByTag("tr");
+        var winsData = new StringBuilder();
+        for (var row: allWinsTable) {
+            winsData.append(row.text()).append("\n");
+        }
+        return winsData.toString();
+    }
 }

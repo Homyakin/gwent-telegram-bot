@@ -56,24 +56,12 @@ public class AllWinsAction {
                 return Either.left(new ProfileNotFound(name));
             }
 
-            return Either.right(new CommandResponse(getWinsData(doc)));
+            return Either.right(new CommandResponse(
+                GwentProfileUtils.getName(doc) + "\n" + GwentProfileUtils.getWinsData(doc))
+            );
         } catch (Exception e) {
             logger.error("Unexpected error during parsing", e);
             return Either.left(new ParsingError());
         }
-    }
-
-    public String getWinsData(Document doc) {
-        var allWinsTable = doc
-            .getElementsByClass("c-statistics-table wins-table")
-            .get(0)
-            .getElementsByTag("tbody")
-            .get(0)
-            .getElementsByTag("tr");
-        var winsData = new StringBuilder();
-        for (var row: allWinsTable) {
-            winsData.append(row.text()).append("\n");
-        }
-        return winsData.toString();
     }
 }
