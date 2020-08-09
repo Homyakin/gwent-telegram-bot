@@ -9,6 +9,7 @@ import ru.homyakin.gwent.models.UserMessage;
 import ru.homyakin.gwent.models.errors.EitherError;
 import ru.homyakin.gwent.models.errors.InvalidCommand;
 import ru.homyakin.gwent.models.errors.UnknownCommand;
+import ru.homyakin.gwent.service.action.AllWinsAction;
 import ru.homyakin.gwent.service.action.GwentCardsAction;
 import ru.homyakin.gwent.service.action.GwentProfileAction;
 import ru.homyakin.gwent.service.action.RegisterProfileAction;
@@ -18,15 +19,18 @@ public class CommandService {
     private final GwentProfileAction gwentProfileAction;
     private final GwentCardsAction gwentCardsAction;
     private final RegisterProfileAction registerProfileAction;
+    private final AllWinsAction allWinsAction;
 
     public CommandService(
         GwentProfileAction gwentProfileAction,
         GwentCardsAction gwentCardsAction,
-        RegisterProfileAction registerProfileAction
+        RegisterProfileAction registerProfileAction,
+        AllWinsAction allWinsAction
     ) {
         this.gwentProfileAction = gwentProfileAction;
         this.gwentCardsAction = gwentCardsAction;
         this.registerProfileAction = registerProfileAction;
+        this.allWinsAction = allWinsAction;
     }
 
     public Either<EitherError, CommandResponse> executeCommand(UserMessage message) {
@@ -41,6 +45,9 @@ public class CommandService {
             var name = getNameFromCommand(command);
             if (name.isEmpty()) return Either.left(new InvalidCommand("Не забывай отправить имя через пробел после команды"));
             return registerProfileAction.registerProfile(name.get(), message.getId());
+        } else if (command.toLowerCase().startsWith(Command.GET_ALL_WINS.getValue())) {
+            var name = getNameFromCommand(command);
+            return allWinsAction.getAllWins(name, message.getId());
         }
         return Either.left(new UnknownCommand());
     }

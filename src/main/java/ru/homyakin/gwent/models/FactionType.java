@@ -1,7 +1,7 @@
 package ru.homyakin.gwent.models;
 
-public enum  FactionType {
-    GENERAL("gwent", "Всего карт"),
+public enum FactionType {
+    GENERAL("gwent", "Всего"),
     MONSTERS("monsters", "Монстры"),
     NILFGAARD("nilfgaard", "Нильфгаард"),
     SCOIATAEL("scoiatael", "Скоя’таэли"),
