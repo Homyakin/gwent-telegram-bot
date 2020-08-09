@@ -95,7 +95,7 @@ public class GwentProfileAction {
                     loses,
                     draws,
                     rank
-                )
+                );
             }
 
 
