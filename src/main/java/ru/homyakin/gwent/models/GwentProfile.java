@@ -36,6 +36,26 @@ public class GwentProfile {
         this.rank = rank;
     }
 
+    public GwentProfile(
+        String name,
+        String level,
+        String prestige,
+        String mmr,
+        String position,
+        String rank
+    ) {
+        this.name = name;
+        this.level = level;
+        this.prestige = prestige;
+        this.mmr = mmr;
+        this.position = position;
+        this.matches = "0";
+        this.wins = "0";
+        this.loses = "0";
+        this.draws = "0";
+        this.rank = rank;
+    }
+
     @Override
     public String toString() {
         var winrate = !matches.equals("0") ? Double.parseDouble(wins.replace(",", "")) / Double.parseDouble(matches.replace(",", "")) * 100 : 0d;
