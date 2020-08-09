@@ -3,6 +3,7 @@ package ru.homyakin.gwent.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import ru.homyakin.gwent.models.FactionCardsData;
@@ -92,14 +93,15 @@ public class GwentProfileUtils {
             .get("src");
     }
 
-    public static String getProfileBorderLink(Document doc) {
-        return doc
+    public static Optional<String> getProfileBorderLink(Document doc) {
+        if (doc.getElementsByClass("l-player-details__border").size() == 0) return Optional.empty();
+        return Optional.of(doc
             .getElementsByClass("l-player-details__border")
             .get(0)
             .getElementsByTag("img")
             .get(0)
             .attributes()
-            .get("src");
+            .get("src"));
     }
 
     public static boolean isHidden(Document doc) {

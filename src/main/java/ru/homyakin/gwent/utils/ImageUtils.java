@@ -13,9 +13,12 @@ import org.slf4j.LoggerFactory;
 public class ImageUtils {
     private final static Logger logger = LoggerFactory.getLogger(ImageUtils.class);
 
-    public static Optional<InputStream> combineAvatarAndBorder(String avatarLink, String borderLink) {
+    public static Optional<InputStream> combineAvatarAndBorder(String avatarLink, Optional<String> borderLink) {
         try {
-            var border = ImageIO.read(new URL(borderLink).openStream());
+            if (borderLink.isEmpty()) {
+                return Optional.of(new URL(avatarLink).openStream());
+            }
+            var border = ImageIO.read(new URL(borderLink.get()).openStream());
             var avatar = ImageIO.read(new URL(avatarLink).openStream());
             int heightAvatar = 125;
             int widthAvatar = 125;
