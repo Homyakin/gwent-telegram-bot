@@ -94,7 +94,14 @@ public class GwentProfileUtils {
     }
 
     public static Optional<String> getProfileBorderLink(Document doc) {
-        if (doc.getElementsByClass("l-player-details__border").size() == 0) return Optional.empty();
+        if (doc
+            .getElementsByClass("l-player-details__border")
+            .get(0)
+            .getElementsByTag("img")
+            .size() == 0
+        ) {
+            return Optional.empty();
+        }
         return Optional.of(doc
             .getElementsByClass("l-player-details__border")
             .get(0)
