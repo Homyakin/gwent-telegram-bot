@@ -5,8 +5,6 @@ spring:
     url: jdbc:mysql://localhost:3307/gwent
     password: 12345
     username: root
-    hikari:
-      maximum-pool-size: 100
 
 ru:
   homyakin:
