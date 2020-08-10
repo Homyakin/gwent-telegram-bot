@@ -33,15 +33,12 @@ public class GwentCardsAction {
     }
 
     public Either<EitherError, CommandResponse> getCards(Optional<String> name, int userId) {
-        if (name.isEmpty()) {
-            var profile = usersRepository.getProfileById(userId);
-            if (profile.isRight()) {
-                return getCardsByName(profile.get());
-            } else {
-                return Either.left(profile.getLeft());
-            }
-        }
-        return getCardsByName(name.get());
+        return name
+            .map(this::getCardsByName)
+            .orElse(
+                usersRepository.getProfileById(userId)
+                    .flatMap(this::getCardsByName)
+            );
     }
 
     public Either<EitherError, CommandResponse> getCardsByName(String name) {

@@ -32,15 +32,12 @@ public class GwentProfileAction {
     }
 
     public Either<EitherError, CommandResponse> getProfile(Optional<String> name, int userId) {
-        if (name.isEmpty()) {
-            var profile = usersRepository.getProfileById(userId);
-            if (profile.isRight()) {
-                return getProfileByName(profile.get());
-            } else {
-                return Either.left(profile.getLeft());
-            }
-        }
-        return getProfileByName(name.get());
+        return name
+            .map(this::getProfileByName)
+            .orElse(
+                usersRepository.getProfileById(userId)
+                    .flatMap(this::getProfileByName)
+            );
     }
 
     public Either<EitherError, CommandResponse> getProfileByName(String name) {

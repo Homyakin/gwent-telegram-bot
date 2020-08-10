@@ -31,15 +31,12 @@ public class AllWinsAction {
     }
 
     public Either<EitherError, CommandResponse> getAllWins(Optional<String> name, int userId) {
-        if (name.isEmpty()) {
-            var profile = usersRepository.getProfileById(userId);
-            if (profile.isRight()) {
-                return getAllWinsByName(profile.get());
-            } else {
-                return Either.left(profile.getLeft());
-            }
-        }
-        return getAllWinsByName(name.get());
+        return name
+            .map(this::getAllWinsByName)
+            .orElse(
+                usersRepository.getProfileById(userId)
+                    .flatMap(this::getAllWinsByName)
+            );
     }
 
     private Either<EitherError, CommandResponse> getAllWinsByName(String name) {
