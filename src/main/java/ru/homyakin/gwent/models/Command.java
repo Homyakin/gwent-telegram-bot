@@ -4,7 +4,9 @@ public enum Command {
     GET_PROFILE("/get_profile"),
     GET_CARDS("/get_cards"),
     REGISTER("/register"),
-    GET_ALL_WINS("/get_all_wins");
+    GET_ALL_WINS("/get_all_wins"),
+    START("/start"),
+    UNKNOWN("unknown");
 
     private final String value;
 

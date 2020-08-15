@@ -1,7 +1,6 @@
 package ru.homyakin.gwent.telegram;
 
 import com.vdurmont.emoji.EmojiParser;
-import java.net.URL;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,16 +34,21 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public void onUpdateReceived(Update update) {
         if (update.hasMessage()) {
-            if (update.getMessage().isCommand()) {
+            var message = update.getMessage();
+            if (message.isCommand()) {
                 logger.info(
                     "New request {} from {} in {}",
-                    update.getMessage().getText(),
-                    update.getMessage().getFrom(),
-                    update.getMessage().getChat()
+                    message.getText(),
+                    message.getFrom(),
+                    message.getChat()
                 );
                 var response = commandService
                     .executeCommand(
-                        new UserMessage(update.getMessage().getText(), update.getMessage().getFrom().getId())
+                        new UserMessage(
+                            message.getText(),
+                            message.getFrom().getId(),
+                            message.isUserMessage()
+                        )
                     );
                 var text = response
                     .map(CommandResponse::getText)
@@ -53,19 +57,17 @@ public class Bot extends TelegramLongPollingBot {
                 if (response.isRight() && response.get().getImageLink().isPresent()) {
                     var imageStream = response.get().getImageLink().get();
                     try {
-                        var message = new SendPhoto()
+                        var sendPhoto = new SendPhoto()
                             .setPhoto(imageStream.toString(), imageStream)
                             .setCaption(text)
-                            .setChatId(update.getMessage().getChatId());
-                        sendMessage(message);
+                            .setChatId(message.getChatId());
+                        sendMessage(sendPhoto);
                     } catch (Exception e) {
                         logger.error("Error during sending photo {}", imageStream, e);
-                        sendTextMessage(text, update.getMessage().getChatId());
+                        sendTextMessage(text, message.getChatId());
                     }
-                } else if ( response.isRight() || response.isLeft() &&
-                    (!(response.getLeft() instanceof UnknownCommand) || update.getMessage().isUserMessage())
-                ) {
-                    sendTextMessage(text, update.getMessage().getChatId());
+                } else if (response.isRight() || response.isLeft() && !(response.getLeft() instanceof UnknownCommand)) {
+                    sendTextMessage(text, message.getChatId());
                 }
             }
         }
