@@ -3,6 +3,8 @@ package ru.homyakin.gwent.service;
 import io.vavr.control.Either;
 import org.springframework.stereotype.Service;
 import ru.homyakin.gwent.models.CommandResponse;
+import ru.homyakin.gwent.models.StartCommandResponse;
+import ru.homyakin.gwent.models.UnknownCommandResponse;
 import ru.homyakin.gwent.models.UserMessage;
 import ru.homyakin.gwent.models.errors.EitherError;
 import ru.homyakin.gwent.models.errors.InvalidCommand;
@@ -36,42 +38,41 @@ public class CommandService {
 
     public Either<EitherError, CommandResponse> executeCommand(UserMessage message) {
         var command = commandParser.getCommandFromText(message.getText());
-        switch (command) {
+        return switch (command) {
             case GET_PROFILE -> {
                 var name = commandParser.getNameFromText(message.getText());
-                return gwentProfileAction.getProfile(name, message.getId());
+                yield gwentProfileAction.getProfile(name, message.getId());
             }
             case GET_CARDS -> {
                 var name = commandParser.getNameFromText(message.getText());
-                return gwentCardsAction.getCards(name, message.getId());
+                yield gwentCardsAction.getCards(name, message.getId());
             }
             case GET_ALL_WINS -> {
                 var name = commandParser.getNameFromText(message.getText());
-                return allWinsAction.getAllWins(name, message.getId());
+                yield allWinsAction.getAllWins(name, message.getId());
             }
             case REGISTER -> {
                 var name = commandParser.getNameFromText(message.getText());
                 if (name.isEmpty()) {
-                    return Either.left(new InvalidCommand("Не забывай отправить имя через пробел после команды"));
+                    yield Either.left(new InvalidCommand("Не забывай отправить имя через пробел после команды"));
                 } else {
-                    return registerProfileAction.registerProfile(name.get(), message.getId());
+                    yield registerProfileAction.registerProfile(name.get(), message.getId());
                 }
             }
             case START -> {
                 if (message.isPrivateMessage()) {
-                    return Either.right(
-                        new CommandResponse("Приветствую тебя в боте для получения информации с сайта playgwent.com.\n" +
-                            "Зарегистрируйся с помощью команды /register, или просто введи /get_profile и своё имя через пробел.")
-                    );
+                    yield Either.right(new StartCommandResponse());
+                } else {
+                    yield Either.left(new UnknownCommand());
                 }
             }
-        }
-        if (message.isPrivateMessage()) {
-            return Either.right(
-                new CommandResponse("Неизвестная команда")
-            );
-        } else {
-            return Either.left(new UnknownCommand());
-        }
+            case UNKNOWN -> {
+                if (message.isPrivateMessage()) {
+                    yield Either.right(new UnknownCommandResponse());
+                } else {
+                    yield Either.left(new UnknownCommand());
+                }
+            }
+        };
     }
 }
