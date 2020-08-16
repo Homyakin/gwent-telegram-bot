@@ -60,48 +60,22 @@ public class GwentProfileAction {
             var mmr = GwentProfileUtils.getMmr(doc);
             var rank = GwentProfileUtils.getRank(doc);
             var position = GwentProfileUtils.getPosition(doc);
-            GwentProfile gwentProfile;
-            if (doc.getElementsByClass("c-statistics-table current-ranked").size() == 0) {
-                gwentProfile = new GwentProfile(
-                    nick,
-                    level,
-                    prestige,
-                    mmr,
-                    position,
-                    rank
-                );
-            } else {
-                var currentRankedSeason = doc
-                    .getElementsByClass("c-statistics-table current-ranked")
-                    .get(0)
-                    .getElementsByTag("tbody")
-                    .get(0)
-                    .getElementsByTag("tr");
-                var matches = GwentProfileUtils.getMatchesInSeason(currentRankedSeason.get(0));
-                var wins = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(1));
-                var loses = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(2));
-                var draws = GwentProfileUtils.getTypedMatchesInSeason(currentRankedSeason.get(3));
-                gwentProfile = new GwentProfile(
-                    nick,
-                    level,
-                    prestige,
-                    mmr,
-                    position,
-                    matches,
-                    wins,
-                    loses,
-                    draws,
-                    rank
-                );
-            }
-
-
+            var currentSeason = GwentProfileUtils.getCurrentSeason(doc);
+            var gwentProfile = new GwentProfile(
+                nick,
+                level,
+                prestige,
+                mmr,
+                position,
+                rank,
+                currentSeason
+            );
             var avatarLink = GwentProfileUtils.getProfileAvatarLink(doc);
             var borderLink = GwentProfileUtils.getProfileBorderLink(doc);
             var image = ImageUtils.combineAvatarAndBorder(avatarLink, borderLink);
             return Either.right(new CommandResponse(gwentProfile.toString(), image.orElse(null)));
         } catch (Exception e) {
-            logger.error("Unexpected error during parsing", e);
+            logger.error("Unexpected error during parsing profile", e);
             return Either.left(new ParsingError());
         }
     }

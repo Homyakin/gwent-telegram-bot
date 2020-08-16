@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import ru.homyakin.gwent.database.UsersRepository;
 import ru.homyakin.gwent.models.CommandResponse;
-import ru.homyakin.gwent.models.FactionCardsData;
+import ru.homyakin.gwent.models.FactionCards;
 import ru.homyakin.gwent.models.errors.EitherError;
 import ru.homyakin.gwent.models.errors.ParsingError;
 import ru.homyakin.gwent.models.errors.ProfileIsHidden;
@@ -64,7 +64,7 @@ public class GwentCardsAction {
         }
     }
 
-    private String convertAllFactionCardsToString(List<FactionCardsData> list) {
+    private String convertAllFactionCardsToString(List<FactionCards> list) {
         StringBuilder response = new StringBuilder();
         for (var factionCards : list) {
             response.append(factionCards.toString()).append("\n");

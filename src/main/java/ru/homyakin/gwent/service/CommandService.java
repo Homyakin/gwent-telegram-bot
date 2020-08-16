@@ -10,6 +10,7 @@ import ru.homyakin.gwent.models.errors.EitherError;
 import ru.homyakin.gwent.models.errors.InvalidCommand;
 import ru.homyakin.gwent.models.errors.UnknownCommand;
 import ru.homyakin.gwent.service.action.AllWinsAction;
+import ru.homyakin.gwent.service.action.CurrentSeasonAction;
 import ru.homyakin.gwent.service.action.GwentCardsAction;
 import ru.homyakin.gwent.service.action.GwentProfileAction;
 import ru.homyakin.gwent.service.action.RegisterProfileAction;
@@ -21,19 +22,22 @@ public class CommandService {
     private final RegisterProfileAction registerProfileAction;
     private final AllWinsAction allWinsAction;
     private final CommandParser commandParser;
+    private final CurrentSeasonAction currentSeasonAction;
 
     public CommandService(
         GwentProfileAction gwentProfileAction,
         GwentCardsAction gwentCardsAction,
         RegisterProfileAction registerProfileAction,
         AllWinsAction allWinsAction,
-        CommandParser commandParser
+        CommandParser commandParser,
+        CurrentSeasonAction currentSeasonAction
     ) {
         this.gwentProfileAction = gwentProfileAction;
         this.gwentCardsAction = gwentCardsAction;
         this.registerProfileAction = registerProfileAction;
         this.allWinsAction = allWinsAction;
         this.commandParser = commandParser;
+        this.currentSeasonAction = currentSeasonAction;
     }
 
     public Either<EitherError, CommandResponse> executeCommand(UserMessage message) {
@@ -65,6 +69,10 @@ public class CommandService {
                 } else {
                     yield Either.left(new UnknownCommand());
                 }
+            }
+            case GET_CURRENT_SEASON -> {
+                var name = commandParser.getNameFromText(message.getText());
+                yield currentSeasonAction.getCurrentSeason(name, message.getId());
             }
             case UNKNOWN -> {
                 if (message.isPrivateMessage()) {

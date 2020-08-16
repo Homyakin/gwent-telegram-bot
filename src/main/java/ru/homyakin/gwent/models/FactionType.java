@@ -18,6 +18,18 @@ public enum FactionType {
         this.rusName = rusName;
     }
 
+    public static FactionType fromSiteName(String siteName) {
+        return switch (siteName) {
+            case "monsters" -> MONSTERS;
+            case "nilfgaard" -> NILFGAARD;
+            case "scoiatael" -> SCOIATAEL;
+            case "skellige" -> SKELLIGE;
+            case "northernrealms" -> NORTHERN_REALMS;
+            case "syndicate" -> SYNDICATE;
+            default -> null;
+        };
+    }
+
     public String getRusName() {
         return rusName;
     }

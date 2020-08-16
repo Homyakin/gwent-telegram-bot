@@ -1,11 +1,11 @@
 package ru.homyakin.gwent.models;
 
-public class FactionCardsData {
+public class FactionCards {
     private final FactionType factionType;
     private final int cards;
     private final int totalCards;
 
-    public FactionCardsData(FactionType factionType, int cards, int totalCards) {
+    public FactionCards(FactionType factionType, int cards, int totalCards) {
         this.factionType = factionType;
         this.cards = cards;
         this.totalCards = totalCards;

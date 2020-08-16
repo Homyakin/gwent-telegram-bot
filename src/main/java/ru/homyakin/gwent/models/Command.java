@@ -6,6 +6,7 @@ public enum Command {
     REGISTER("/register"),
     GET_ALL_WINS("/get_all_wins"),
     START("/start"),
+    GET_CURRENT_SEASON("/get_current_season"),
     UNKNOWN("unknown");
 
     private final String value;
