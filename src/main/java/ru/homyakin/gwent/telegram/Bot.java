@@ -112,6 +112,7 @@ public class Bot extends TelegramLongPollingBot {
                         new AnswerInlineQuery()
                             .setInlineQueryId(update.getInlineQuery().getId())
                             .setResults(results)
+                            .setCacheTime(0)
                     );
                 } catch (TelegramApiException e) {
                     logger.error("Error during sending inline answer", e);
