@@ -48,7 +48,7 @@ public class CurrentSeasonAction {
         }
     }
 
-    private Either<EitherError, CommandResponse> getCurrentSeasonByName(String name) {
+    public Either<EitherError, CommandResponse> getCurrentSeasonByName(String name) {
         var body = httpService.getHtmlBodyByUrl(String.format("https://www.playgwent.com/en/profile/%s", name));
         if (body.isLeft()) {
             return Either.left(body.getLeft());

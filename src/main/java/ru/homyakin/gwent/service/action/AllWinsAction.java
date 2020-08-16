@@ -39,7 +39,7 @@ public class AllWinsAction {
             );
     }
 
-    private Either<EitherError, CommandResponse> getAllWinsByName(String name) {
+    public Either<EitherError, CommandResponse> getAllWinsByName(String name) {
         var body = httpService.getHtmlBodyByUrl(String.format("https://www.playgwent.com/ru/profile/%s", name));
         if (body.isLeft()) {
             return Either.left(body.getLeft());
