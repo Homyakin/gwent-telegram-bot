@@ -98,7 +98,7 @@ public class Bot extends TelegramLongPollingBot {
                     .stream()
                     .map(
                         (it) -> new InlineQueryResultArticle()
-                            .setDescription(it.getInlineMenuItem().getDescription())
+                            .setDescription(it.getText())
                             .setId(it.getInlineMenuItem().getId())
                             .setTitle(it.getInlineMenuItem().getTitle())
                             .setInputMessageContent(
