@@ -2,10 +2,12 @@ package ru.homyakin.gwent.models;
 
 public enum InlineMenuItem {
     PROFILE("profile", "Профиль", "Получить профиль"),
-    CURRENT_SEASON("current_season", "Сезон", "Получить информацию о текущем сезоне"),
+    CURRENT_SEASON("current-season", "Сезон", "Получить информацию о текущем сезоне"),
     CARDS("cards", "Карты", "Получить информацию о коллекции"),
-    ALL_WINS("all_wins", "Все победы", "Получить победы за всё время"),
-    UNKNOWN_USER("unknown", "Unknown", "Зарегистрируйся в боте, чтобы использовать инлайн");
+    ALL_WINS("all-wins", "Все победы", "Получить победы за всё время"),
+    UNKNOWN_USER("unknown", "Unknown", "Зарегистрируйся в боте или введи имя"),
+    PROFILE_NOT_FOUND("profile-not-found", "Профиль не найден", "Запрашиваемый профиль не найден"),
+    PROFILE_IS_HIDDEN("profile-is-hidden", "Профиль скрыт", "Запрашиваемый профиль скрыт");
 
     private final String id;
     private final String title;

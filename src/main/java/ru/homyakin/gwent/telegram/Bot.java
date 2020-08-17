@@ -117,6 +117,8 @@ public class Bot extends TelegramLongPollingBot {
                 } catch (TelegramApiException e) {
                     logger.error("Error during sending inline answer", e);
                 }
+            } else {
+                logger.error("Error during inline query {}; {}", answer.getLeft().getMessage(), answer.getLeft());
             }
         }
     }

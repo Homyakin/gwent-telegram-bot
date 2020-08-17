@@ -10,6 +10,8 @@ import ru.homyakin.gwent.models.InlineMenuItem;
 import ru.homyakin.gwent.models.InlineResult;
 import ru.homyakin.gwent.models.UserInlineQuery;
 import ru.homyakin.gwent.models.errors.EitherError;
+import ru.homyakin.gwent.models.errors.ProfileIsHidden;
+import ru.homyakin.gwent.models.errors.ProfileNotFound;
 import ru.homyakin.gwent.models.errors.UserNotRegistered;
 import ru.homyakin.gwent.service.action.AllWinsAction;
 import ru.homyakin.gwent.service.action.CurrentSeasonAction;
@@ -38,29 +40,42 @@ public class InlineModeService {
         this.currentSeasonAction = currentSeasonAction;
     }
     public Either<EitherError, List<InlineResult>> createInlineMenu(UserInlineQuery query) {
-        var databaseResult = usersRepository.getProfileById(query.getId());
-        if (databaseResult.isLeft()) {
-            if (databaseResult.getLeft() instanceof UserNotRegistered) {
+        var username = query.getText();
+        if (username.equals("")) {
+            var databaseResult = usersRepository.getProfileById(query.getId());
+            if (databaseResult.isLeft()) {
+                if (databaseResult.getLeft() instanceof UserNotRegistered) {
+                    return Either.right(Collections.singletonList(
+                        new InlineResult(InlineMenuItem.UNKNOWN_USER, InlineMenuItem.UNKNOWN_USER.getDescription())
+                    ));
+                }
+                return Either.left(databaseResult.getLeft());
+            }
+            username = databaseResult.get();
+        }
+        var profile = gwentProfileAction.getProfileByName(username);
+        if (profile.isLeft()) {
+            var left = profile.getLeft();
+            if (left instanceof ProfileNotFound) {
                 return Either.right(Collections.singletonList(
-                    new InlineResult(InlineMenuItem.UNKNOWN_USER, InlineMenuItem.UNKNOWN_USER.getDescription())
+                    new InlineResult(InlineMenuItem.PROFILE_NOT_FOUND, InlineMenuItem.PROFILE_NOT_FOUND.getDescription())
+                ));
+            } else if (left instanceof ProfileIsHidden) {
+                return Either.right(Collections.singletonList(
+                    new InlineResult(InlineMenuItem.PROFILE_IS_HIDDEN, InlineMenuItem.PROFILE_IS_HIDDEN.getDescription())
                 ));
             }
-            return Either.left(databaseResult.getLeft());
-        }
-        var name = databaseResult.get();
-        var profile = gwentProfileAction.getProfileByName(name);
-        if (profile.isLeft()) {
             return Either.left(profile.getLeft());
         }
-        var cards = gwentCardsAction.getCardsByName(name);
+        var cards = gwentCardsAction.getCardsByName(username);
         if (cards.isLeft()) {
             return Either.left(cards.getLeft());
         }
-        var allWins = allWinsAction.getAllWinsByName(name);
+        var allWins = allWinsAction.getAllWinsByName(username);
         if (allWins.isLeft()) {
             return Either.left(allWins.getLeft());
         }
-        var currentSeason = currentSeasonAction.getCurrentSeasonByName(name);
+        var currentSeason = currentSeasonAction.getCurrentSeasonByName(username);
         if (currentSeason.isLeft()) {
             return Either.left(currentSeason.getLeft());
         }
