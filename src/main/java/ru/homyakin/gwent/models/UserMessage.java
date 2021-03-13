@@ -2,10 +2,10 @@ package ru.homyakin.gwent.models;
 
 public class UserMessage {
     private final String text;
-    private final int id;
+    private final Long id;
     private final boolean privateMessage;
 
-    public UserMessage(String text, int id, boolean privateMessage) {
+    public UserMessage(String text, Long id, boolean privateMessage) {
         this.text = text;
         this.id = id;
         this.privateMessage = privateMessage;
@@ -15,7 +15,7 @@ public class UserMessage {
         return text;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 

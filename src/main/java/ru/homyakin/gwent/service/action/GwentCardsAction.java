@@ -32,7 +32,7 @@ public class GwentCardsAction {
         this.httpService = httpService;
     }
 
-    public Either<EitherError, CommandResponse> getCards(Optional<String> name, int userId) {
+    public Either<EitherError, CommandResponse> getCards(Optional<String> name, Long userId) {
         return name
             .map(this::getCardsByName)
             .orElse(

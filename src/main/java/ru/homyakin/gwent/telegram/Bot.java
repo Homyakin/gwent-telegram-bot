@@ -11,6 +11,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.AnswerInlineQuery;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.inlinequery.inputmessagecontent.InputTextMessageContent;
@@ -71,17 +72,19 @@ public class Bot extends TelegramLongPollingBot {
                 if (response.isRight() && response.get().getImageLink().isPresent()) {
                     var imageStream = response.get().getImageLink().get();
                     try {
-                        var sendPhoto = new SendPhoto()
-                            .setPhoto(imageStream.toString(), imageStream)
-                            .setCaption(text)
-                            .setChatId(message.getChatId());
+                        var sendPhoto = SendPhoto
+                            .builder()
+                            .photo(new InputFile(imageStream, imageStream.toString()))
+                            .caption(text)
+                            .chatId(message.getChatId().toString())
+                            .build();
                         sendMessage(sendPhoto);
                     } catch (Exception e) {
                         logger.error("Error during sending photo {}", imageStream, e);
-                        sendTextMessage(text, message.getChatId());
+                        sendTextMessage(text, message.getChatId().toString());
                     }
                 } else if (response.isRight() || response.isLeft() && !(response.getLeft() instanceof UnknownCommand)) {
-                    sendTextMessage(text, message.getChatId());
+                    sendTextMessage(text, message.getChatId().toString());
                 }
             }
         } else if (update.hasInlineQuery()) {
@@ -97,22 +100,27 @@ public class Bot extends TelegramLongPollingBot {
                 List<InlineQueryResult> results = answer.get()
                     .stream()
                     .map(
-                        (it) -> new InlineQueryResultArticle()
-                            .setDescription(it.getText())
-                            .setId(it.getInlineMenuItem().getId())
-                            .setTitle(it.getInlineMenuItem().getTitle())
-                            .setInputMessageContent(
-                                new InputTextMessageContent()
-                                    .setMessageText(EmojiParser.parseToUnicode(it.getText()))
+                        (it) -> InlineQueryResultArticle
+                            .builder()
+                            .description(it.getText())
+                            .id(it.getInlineMenuItem().getId())
+                            .title(it.getInlineMenuItem().getTitle())
+                            .inputMessageContent(
+                                InputTextMessageContent.builder()
+                                    .messageText(EmojiParser.parseToUnicode(it.getText()))
+                                .build()
                             )
+                        .build()
                     )
                     .collect(Collectors.toList());
                 try {
                     sendApiMethod(
-                        new AnswerInlineQuery()
-                            .setInlineQueryId(update.getInlineQuery().getId())
-                            .setResults(results)
-                            .setCacheTime(0)
+                        AnswerInlineQuery
+                            .builder()
+                            .inlineQueryId(update.getInlineQuery().getId())
+                            .results(results)
+                            .cacheTime(0)
+                            .build()
                     );
                 } catch (TelegramApiException e) {
                     logger.error("Error during sending inline answer", e);
@@ -123,10 +131,12 @@ public class Bot extends TelegramLongPollingBot {
         }
     }
 
-    public Optional<Message> sendTextMessage(String text, Long chatId) {
-        var message = new SendMessage()
-            .setChatId(chatId)
-            .setText(text);
+    public Optional<Message> sendTextMessage(String text, String chatId) {
+        var message = SendMessage
+            .builder()
+            .chatId(chatId)
+            .text(text)
+            .build();
         return sendMessage(message);
     }
 

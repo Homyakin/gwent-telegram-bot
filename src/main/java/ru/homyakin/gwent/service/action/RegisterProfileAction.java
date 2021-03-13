@@ -19,7 +19,7 @@ public class RegisterProfileAction {
         this.gwentProfileAction = gwentProfileAction;
     }
 
-    public Either<EitherError, CommandResponse> registerProfile(String gwentName, Integer userId) {
+    public Either<EitherError, CommandResponse> registerProfile(String gwentName, Long userId) {
         var profileResult = gwentProfileAction.getProfileByName(gwentName);
         if (profileResult.isLeft()) {
             return Either.left(profileResult.getLeft());

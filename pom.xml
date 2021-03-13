@@ -12,7 +12,7 @@
         <java.version>14</java.version>
         <spring.version>2.2.6.RELEASE</spring.version>
         <start-class>ru.homyakin.gwent.Application</start-class>
-        <telegram.version>4.9.1</telegram.version>
+        <telegram.version>5.1.0</telegram.version>
     </properties>
 
     <dependencies>

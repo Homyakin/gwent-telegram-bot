@@ -30,7 +30,7 @@ public class AllWinsAction {
         this.httpService = httpService;
     }
 
-    public Either<EitherError, CommandResponse> getAllWins(Optional<String> name, int userId) {
+    public Either<EitherError, CommandResponse> getAllWins(Optional<String> name, Long userId) {
         return name
             .map(this::getAllWinsByName)
             .orElse(

@@ -31,7 +31,7 @@ public class GwentProfileAction {
         this.usersRepository = usersRepository;
     }
 
-    public Either<EitherError, CommandResponse> getProfile(Optional<String> name, int userId) {
+    public Either<EitherError, CommandResponse> getProfile(Optional<String> name, Long userId) {
         return name
             .map(this::getProfileByName)
             .orElse(

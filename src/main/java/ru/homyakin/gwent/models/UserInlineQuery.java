@@ -2,9 +2,9 @@ package ru.homyakin.gwent.models;
 
 public class UserInlineQuery {
     private final String text;
-    private final int id;
+    private final Long id;
 
-    public UserInlineQuery(int id, String text) {
+    public UserInlineQuery(Long id, String text) {
         this.id = id;
         this.text = text;
     }
@@ -13,7 +13,7 @@ public class UserInlineQuery {
         return text;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 }

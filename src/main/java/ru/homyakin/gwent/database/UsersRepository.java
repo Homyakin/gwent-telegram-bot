@@ -22,7 +22,7 @@ public class UsersRepository {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public Either<EitherError, String> registerProfile(String gwentProfileName, Integer userId) {
+    public Either<EitherError, String> registerProfile(String gwentProfileName, Long userId) {
         String sql = "INSERT INTO gwent.users (user_id, gwent_profile_name)" +
             "VALUES (?, ?);";
         try {
@@ -40,7 +40,7 @@ public class UsersRepository {
         }
     }
 
-    public Either<EitherError, String> getProfileById(Integer userId) {
+    public Either<EitherError, String> getProfileById(Long userId) {
         String sql = "SELECT gwent_profile_name FROM gwent.users WHERE user_id = ?";
         try {
             List<String> result = jdbcTemplate.query(
@@ -58,7 +58,7 @@ public class UsersRepository {
         }
     }
 
-    private Either<EitherError, String> updateProfile(String gwentProfileName, Integer userId) {
+    private Either<EitherError, String> updateProfile(String gwentProfileName, Long userId) {
         String sql = "UPDATE gwent.users SET gwent_profile_name = ?" +
             "WHERE user_id = ?";
         try {

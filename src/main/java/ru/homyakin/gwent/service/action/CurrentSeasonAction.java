@@ -34,7 +34,7 @@ public class CurrentSeasonAction {
         this.httpService = httpService;
     }
 
-    public Either<EitherError, CommandResponse> getCurrentSeason(Optional<String> name, int userId) {
+    public Either<EitherError, CommandResponse> getCurrentSeason(Optional<String> name, Long userId) {
         try {
             return name
                 .map(this::getCurrentSeasonByName)

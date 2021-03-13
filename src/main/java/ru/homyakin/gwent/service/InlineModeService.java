@@ -39,6 +39,7 @@ public class InlineModeService {
         this.allWinsAction = allWinsAction;
         this.currentSeasonAction = currentSeasonAction;
     }
+
     public Either<EitherError, List<InlineResult>> createInlineMenu(UserInlineQuery query) {
         var username = query.getText();
         if (username.equals("")) {
